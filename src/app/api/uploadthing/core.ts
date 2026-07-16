@@ -13,6 +13,10 @@ export const ourFileRouter = {
       console.log("Upload selesai:", file.url);
       return { url: file.url };
     }),
+    
+  boyGroupLogo: f({ image: { maxFileSize: "2MB", maxFileCount: 1 } })
+    .middleware(async () => ({}))
+    .onUploadComplete(async ({ file }) => ({ url: file.url })),
 } satisfies FileRouter;
 
 export type OurFileRouter = typeof ourFileRouter;
