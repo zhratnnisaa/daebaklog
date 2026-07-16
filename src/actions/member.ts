@@ -12,6 +12,7 @@ export async function createMember(formData: FormData) {
   const favoriteFood = formData.get("favoriteFood") as string;
   const funFact = formData.get("funFact") as string;
   const boyGroupId = formData.get("boyGroupId") as string;
+  const photoUrl = formData.get("photoUrl") as string;
 
   await prisma.member.create({
     data: {
@@ -22,6 +23,7 @@ export async function createMember(formData: FormData) {
       favoriteFood,
       funFact,
       boyGroupId,
+      photoUrl: photoUrl || null,
     },
   });
 
