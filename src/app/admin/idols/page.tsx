@@ -1,5 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
+import Image from "next/image";
+import { deleteMember } from "@/actions/member";
 
 export default async function IdolsPage() {
   const members = await prisma.member.findMany({
@@ -9,34 +11,39 @@ export default async function IdolsPage() {
 
   return (
     <div className="p-6">
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex justify-between items-center mb-4">
         <h1 className="text-2xl font-bold text-white">Daftar Idol</h1>
-        <Link
-          href="/admin/idols/new"
-          className="px-4 py-2 rounded-md bg-[#39FF14] text-black font-semibold shadow-[0_0_10px_#39FF14]"
-        >
+        <Link href="/admin/idols/new" className="bg-[#39FF14] text-black px-4 py-2 rounded font-semibold">
           + Tambah Idol
         </Link>
       </div>
 
-      <table className="w-full text-left text-gray-200">
-        <thead>
-          <tr className="border-b border-gray-700">
-            <th className="py-2">Stage Name</th>
-            <th className="py-2">BoyGroup</th>
-            <th className="py-2">Posisi</th>
-          </tr>
-        </thead>
-        <tbody>
-          {members.map((m) => (
-            <tr key={m.id} className="border-b border-gray-800">
-              <td className="py-2">{m.stageName}</td>
-              <td className="py-2">{m.boyGroup.name}</td>
-              <td className="py-2">{m.position}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <div className="grid gap-3">
+        {members.map((m) => (
+          <div key={m.id} className="flex items-center gap-4 bg-gray-800 p-3 rounded">
+            {m.photoUrl ? (
+              <Image src={m.photoUrl} alt={m.stageName} width={48} height={48} className="w-12 h-12 object-cover rounded-full" />
+            ) : (
+              <div className="w-12 h-12 rounded-full bg-gray-700" />
+            )}
+
+            <div className="flex-1 text-white">
+              <p className="font-semibold">{m.stageName}</p>
+              <p className="text-sm text-gray-400">{m.boyGroup.name} — {m.position}</p>
+            </div>
+
+            <Link href={`/admin/idols/${m.id}/edit`} className="text-sm px-3 py-1 rounded bg-blue-600 text-white">
+              Edit
+            </Link>
+
+            <form action={deleteMember.bind(null, m.id)}>
+              <button type="submit" className="text-sm px-3 py-1 rounded bg-red-600 text-white">
+                Hapus
+              </button>
+            </form>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
