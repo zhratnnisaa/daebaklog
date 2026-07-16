@@ -1,0 +1,43 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+model BoyGroup {
+  id          String   @id @default(cuid())
+  name        String
+  agency      String
+  debutYear   Int
+  description String?  @db.Text
+  logoUrl     String?
+  createdAt   DateTime @default(now())
+
+  members Member[]
+
+  @@index([name])
+}
+
+model Member {
+  id            String   @id @default(cuid())
+  boyGroupId    String
+  boyGroup      BoyGroup @relation(fields: [boyGroupId], references: [id], onDelete: Cascade)
+  stageName     String
+  realName      String
+  birthDate     DateTime
+  position      String
+  favoriteFood  String?
+  funFact       String?  @db.Text
+  photoUrl      String?
+  createdAt     DateTime @default(now())
+
+  @@index([boyGroupId])
+}
