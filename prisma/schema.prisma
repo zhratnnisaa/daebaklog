@@ -30,7 +30,9 @@ model BoyGroup {
   logoUrl     String?
   createdAt   DateTime @default(now())
 
-  members Member[]
+  members  Member[]
+  concerts Concert[]
+  albums   Album[]
 
   @@index([name])
 }
@@ -49,4 +51,46 @@ model Member {
   createdAt    DateTime @default(now())
 
   @@index([boyGroupId])
+}
+
+model Concert {
+  id         String   @id @default(cuid())
+  boyGroupId String
+  boyGroup   BoyGroup @relation(fields: [boyGroupId], references: [id], onDelete: Cascade)
+  title      String
+  date       DateTime
+  location   String
+  price      Int
+  quota      Int
+  posterUrl  String?
+  createdAt  DateTime @default(now())
+
+  @@index([boyGroupId])
+}
+
+model Album {
+  id          String   @id @default(cuid())
+  boyGroupId  String
+  boyGroup    BoyGroup @relation(fields: [boyGroupId], references: [id], onDelete: Cascade)
+  title       String
+  coverUrl    String?
+  price       Int
+  stock       Int
+  releaseDate DateTime
+  createdAt   DateTime @default(now())
+
+  songs Song[]
+
+  @@index([boyGroupId])
+}
+
+model Song {
+  id         String  @id @default(cuid())
+  albumId    String
+  album      Album   @relation(fields: [albumId], references: [id], onDelete: Cascade)
+  title      String
+  previewUrl String?
+  duration   Int
+
+  @@index([albumId])
 }
