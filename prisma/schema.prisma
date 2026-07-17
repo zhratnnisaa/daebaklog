@@ -1,0 +1,163 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+model User {
+  id           String        @id @default(cuid())
+  name         String
+  email        String        @unique
+  password     String
+  role         Role          @default(USER)
+  createdAt    DateTime      @default(now())
+  ticketOrders TicketOrder[]
+  albumOrders  AlbumOrder[]
+}
+
+model BoyGroup {
+  id          String   @id @default(cuid())
+  name        String
+  agency      String
+  debutYear   Int
+  description String?  @db.Text
+  logoUrl     String?
+  createdAt   DateTime @default(now())
+
+  members           Member[]
+  concerts          Concert[]
+  albums            Album[]
+  fandomPhotos      FandomPhoto[]
+  comebackSchedules ComebackSchedule[]
+
+  @@index([name])
+}
+
+model Member {
+  id           String   @id @default(cuid())
+  boyGroupId   String
+  boyGroup     BoyGroup @relation(fields: [boyGroupId], references: [id], onDelete: Cascade)
+  stageName    String
+  realName     String
+  birthDate    DateTime
+  position     String
+  favoriteFood String?
+  funFact      String?  @db.Text
+  photoUrl     String?
+  createdAt    DateTime @default(now())
+
+  @@index([boyGroupId])
+}
+
+model Concert {
+  id           String        @id @default(cuid())
+  boyGroupId   String
+  boyGroup     BoyGroup      @relation(fields: [boyGroupId], references: [id], onDelete: Cascade)
+  title        String
+  date         DateTime
+  location     String
+  price        Int
+  quota        Int
+  posterUrl    String?
+  createdAt    DateTime      @default(now())
+  ticketOrders TicketOrder[]
+
+  @@index([boyGroupId])
+}
+
+model Album {
+  id          String   @id @default(cuid())
+  boyGroupId  String
+  boyGroup    BoyGroup @relation(fields: [boyGroupId], references: [id], onDelete: Cascade)
+  title       String
+  coverUrl    String?
+  price       Int
+  stock       Int
+  releaseDate DateTime
+  createdAt   DateTime @default(now())
+
+  songs       Song[]
+  albumOrders AlbumOrder[]
+
+  @@index([boyGroupId])
+}
+
+model Song {
+  id         String  @id @default(cuid())
+  albumId    String
+  album      Album   @relation(fields: [albumId], references: [id], onDelete: Cascade)
+  title      String
+  previewUrl String?
+  duration   Int
+
+  @@index([albumId])
+}
+
+model TicketOrder {
+  id         String      @id @default(cuid())
+  userId     String
+  user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  concertId  String
+  concert    Concert     @relation(fields: [concertId], references: [id], onDelete: Cascade)
+  quantity   Int
+  totalPrice Int
+  status     OrderStatus @default(PENDING)
+  createdAt  DateTime    @default(now())
+
+  @@index([userId])
+  @@index([concertId])
+}
+
+enum OrderStatus {
+  PENDING
+  PAID
+  FAILED
+  CANCELLED
+}
+
+model AlbumOrder {
+  id         String      @id @default(cuid())
+  userId     String
+  user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  albumId    String
+  album      Album       @relation(fields: [albumId], references: [id], onDelete: Cascade)
+  quantity   Int
+  totalPrice Int
+  status     OrderStatus @default(PENDING)
+  createdAt  DateTime    @default(now())
+
+  @@index([userId])
+  @@index([albumId])
+}
+
+model FandomPhoto {
+  id          String   @id @default(cuid())
+  boyGroupId  String
+  boyGroup    BoyGroup @relation(fields: [boyGroupId], references: [id], onDelete: Cascade)
+  imageUrl    String
+  caption     String?  @db.Text
+  createdAt   DateTime @default(now())
+
+  @@index([boyGroupId])
+}
+
+model ComebackSchedule {
+  id          String   @id @default(cuid())
+  boyGroupId  String
+  boyGroup    BoyGroup @relation(fields: [boyGroupId], references: [id], onDelete: Cascade)
+  title       String
+  date        DateTime
+  type        String
+  createdAt   DateTime @default(now())
+
+  @@index([boyGroupId])
+}
+
