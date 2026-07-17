@@ -32,9 +32,11 @@ model BoyGroup {
   logoUrl     String?
   createdAt   DateTime @default(now())
 
-  members  Member[]
-  concerts Concert[]
-  albums   Album[]
+  members           Member[]
+  concerts          Concert[]
+  albums            Album[]
+  fandomPhotos      FandomPhoto[]
+  comebackSchedules ComebackSchedule[]
 
   @@index([name])
 }
@@ -135,3 +137,27 @@ model AlbumOrder {
   @@index([userId])
   @@index([albumId])
 }
+
+model FandomPhoto {
+  id          String   @id @default(cuid())
+  boyGroupId  String
+  boyGroup    BoyGroup @relation(fields: [boyGroupId], references: [id], onDelete: Cascade)
+  imageUrl    String
+  caption     String?  @db.Text
+  createdAt   DateTime @default(now())
+
+  @@index([boyGroupId])
+}
+
+model ComebackSchedule {
+  id          String   @id @default(cuid())
+  boyGroupId  String
+  boyGroup    BoyGroup @relation(fields: [boyGroupId], references: [id], onDelete: Cascade)
+  title       String
+  date        DateTime
+  type        String
+  createdAt   DateTime @default(now())
+
+  @@index([boyGroupId])
+}
+

@@ -2,6 +2,7 @@ import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import { createAlbumOrder } from "@/actions/albumOrder";
 import Image from "next/image";
+import { SongPlayer } from "@/components/public/song-player";
 
 export default async function AlbumDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -36,13 +37,8 @@ export default async function AlbumDetailPage({ params }: { params: Promise<{ id
       </div>
 
       <h2 className="text-lg font-semibold text-white mb-2">Daftar Lagu</h2>
-      <div className="flex flex-col gap-1 mb-6">
-        {album.songs.map((s) => (
-          <div key={s.id} className="flex justify-between text-gray-300 text-sm bg-gray-900 px-3 py-2 rounded">
-            <span>{s.title}</span>
-            <span className="text-gray-500">{Math.floor(s.duration / 60)}:{String(s.duration % 60).padStart(2, "0")}</span>
-          </div>
-        ))}
+      <div className="mb-6">
+        <SongPlayer songs={album.songs} />
       </div>
 
       <form action={buyAlbum} className="flex flex-col gap-3 max-w-xs">

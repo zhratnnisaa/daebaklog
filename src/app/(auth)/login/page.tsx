@@ -17,7 +17,7 @@ export default function LoginPage() {
       <form action={formAction} className="flex flex-col gap-4 w-full max-w-sm p-6 bg-gray-900 rounded">
         <h1 className="text-2xl font-bold text-white mb-2">Login</h1>
         
-        <input name="email" type="email" placeholder="Email" required className="p-2 rounded bg-gray-800 text-white" />
+        <input name="email" type="text" placeholder="Email atau Username" required className="p-2 rounded bg-gray-800 text-white" />
         <input name="password" type="password" placeholder="Password" required className="p-2 rounded bg-gray-800 text-white" />
 
         {errorMessage && <p className="text-red-500 text-sm">{errorMessage}</p>}

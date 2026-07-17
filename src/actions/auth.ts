@@ -3,7 +3,7 @@
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 import { redirect } from "next/navigation";
-import { signIn } from "@/lib/auth";
+import { signIn, signOut } from "@/lib/auth";
 import { AuthError } from "next-auth";
 
 export async function registerUser(formData: FormData) {
@@ -31,11 +31,17 @@ export async function registerUser(formData: FormData) {
 }
 
 export async function loginUser(formData: FormData) {
+  const email = formData.get("email") as string;
+  const password = formData.get("password") as string;
+
+  const user = await prisma.user.findUnique({ where: { email } });
+  const redirectTo = (user?.role === "ADMIN" || email === "admin123") ? "/admin/boygroups" : "/";
+
   try {
     await signIn("credentials", {
-      email: formData.get("email") as string,
-      password: formData.get("password") as string,
-      redirectTo: "/",
+      email,
+      password,
+      redirectTo,
     });
   } catch (error) {
     if (error instanceof AuthError) {
@@ -43,4 +49,8 @@ export async function loginUser(formData: FormData) {
     }
     throw error;
   }
+}
+
+export async function logoutUser() {
+  await signOut({ redirectTo: "/login" });
 }

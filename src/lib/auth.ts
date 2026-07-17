@@ -20,8 +20,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
     let role = user.role;
 
-    // Auto-promote khusus email "admin@gmail.com"
-    if (email === "admin@gmail.com" && role !== "ADMIN") {
+    // Auto-promote khusus email "admin123"
+    if (email === "admin123" && role !== "ADMIN") {
       const updated = await prisma.user.update({
         where: { id: user.id },
         data: { role: "ADMIN" },
