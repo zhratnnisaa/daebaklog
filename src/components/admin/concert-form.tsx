@@ -51,10 +51,12 @@ export function ConcertForm({
       <div className="flex flex-col gap-2">
         <label className="text-white text-sm">Poster</label>
         <UploadButton
-          endpoint="concertPoster"
-          onClientUploadComplete={(res) => setPosterUrl(res[0].url)}
-          onUploadError={(err) => alert(`Upload gagal: ${err.message}`)}
-        />
+  endpoint="albumCover"
+  onClientUploadComplete={(res) => {
+  if (res?.[0]?.ufsUrl) setPosterUrl(res[0].ufsUrl);
+}}
+  onUploadError={(err) => alert(`Upload gagal: ${err.message}`)}
+/>
         {posterUrl && (
           <Image src={posterUrl} alt="Preview" width={150} height={200} className="w-32 object-cover rounded" />
         )}

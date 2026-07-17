@@ -7,32 +7,35 @@ import { authConfig } from "@/lib/auth.config";
 export const { handlers, signIn, signOut, auth } = NextAuth({
   ...authConfig,
   providers: [
-    Credentials({
-      credentials: {
-        email: { label: "Email", type: "email" },
-        password: { label: "Password", type: "password" },
-      },
-      async authorize(credentials) {
-        if (!credentials?.email || !credentials?.password) return null;
+   Credentials({
+  async authorize(credentials) {
+    const email = credentials.email as string;
+    const password = credentials.password as string;
 
-        const user = await prisma.user.findUnique({
-          where: { email: credentials.email as string },
-        });
-        if (!user) return null;
+    const user = await prisma.user.findUnique({ where: { email } });
+    if (!user) return null;
 
-        const passwordMatch = await bcrypt.compare(
-          credentials.password as string,
-          user.password
-        );
-        if (!passwordMatch) return null;
+    const isValid = await bcrypt.compare(password, user.password);
+    if (!isValid) return null;
 
-        return {
-          id: user.id,
-          name: user.name,
-          email: user.email,
-          role: user.role,
-        };
-      },
-    }),
+    let role = user.role;
+
+    // Auto-promote khusus email "admin@gmail.com"
+    if (email === "admin@gmail.com" && role !== "ADMIN") {
+      const updated = await prisma.user.update({
+        where: { id: user.id },
+        data: { role: "ADMIN" },
+      });
+      role = updated.role;
+    }
+
+    return {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      role,
+    };
+  },
+}),
   ],
 });

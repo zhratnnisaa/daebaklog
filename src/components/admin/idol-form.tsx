@@ -54,7 +54,9 @@ export function IdolForm({
         <label className="text-white text-sm">Foto Idol</label>
         <UploadButton
           endpoint="idolPhoto"
-          onClientUploadComplete={(res) => setPhotoUrl(res[0].url)}
+          onClientUploadComplete={(res) => {
+            if (res?.[0]?.ufsUrl) setPhotoUrl(res[0].ufsUrl);
+          }}
           onUploadError={(err) => alert(`Upload gagal: ${err.message}`)}
         />
         {photoUrl && (
