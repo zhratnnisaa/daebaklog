@@ -48,3 +48,14 @@ export async function simulateAlbumPayment(orderId: string, result: "PAID" | "FA
 
   revalidatePath(`/checkout/album/${orderId}`);
 }
+
+export async function adminUpdateAlbumOrderStatus(orderId: string, formData: FormData) {
+  const status = formData.get("status") as "PENDING" | "PAID" | "FAILED" | "CANCELLED";
+
+  await prisma.albumOrder.update({
+    where: { id: orderId },
+    data: { status },
+  });
+
+  revalidatePath("/admin/orders");
+}

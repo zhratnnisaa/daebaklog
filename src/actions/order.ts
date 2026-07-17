@@ -49,3 +49,14 @@ export async function simulatePayment(orderId: string, result: "PAID" | "FAILED"
 
   revalidatePath(`/checkout/ticket/${orderId}`);
 }
+
+export async function adminUpdateTicketOrderStatus(orderId: string, formData: FormData) {
+  const status = formData.get("status") as "PENDING" | "PAID" | "FAILED" | "CANCELLED";
+
+  await prisma.ticketOrder.update({
+    where: { id: orderId },
+    data: { status },
+  });
+
+  revalidatePath("/admin/orders");
+}

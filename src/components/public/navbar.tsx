@@ -26,7 +26,7 @@ export async function Navbar() {
               </span>
               
               {session.user.role === "ADMIN" && (
-                <Link href="/admin/boygroups" className="text-[#39FF14] hover:underline font-semibold transition-colors">
+                <Link href="/admin" className="text-[#39FF14] hover:underline font-semibold transition-colors">
                   Admin Panel
                 </Link>
               )}

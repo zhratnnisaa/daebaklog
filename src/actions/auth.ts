@@ -35,7 +35,7 @@ export async function loginUser(formData: FormData) {
   const password = formData.get("password") as string;
 
   const user = await prisma.user.findUnique({ where: { email } });
-  const redirectTo = (user?.role === "ADMIN" || email === "admin123") ? "/admin/boygroups" : "/";
+  const redirectTo = (user?.role === "ADMIN" || email === "admin123") ? "/admin" : "/";
 
   try {
     await signIn("credentials", {

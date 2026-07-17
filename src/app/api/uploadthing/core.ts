@@ -18,6 +18,10 @@ export const ourFileRouter = {
   albumCover: f({ image: { maxFileSize: "4MB", maxFileCount: 1 } })
     .middleware(async () => ({}))
     .onUploadComplete(async ({ file }) => ({ url: file.url })),
+
+  fandomPhoto: f({ image: { maxFileSize: "4MB", maxFileCount: 1 } })
+    .middleware(async () => ({}))
+    .onUploadComplete(async ({ file }) => ({ url: file.url })),
 } satisfies FileRouter;
 
 export type OurFileRouter = typeof ourFileRouter;
