@@ -13,12 +13,13 @@ enum Role {
 }
 
 model User {
-  id        String   @id @default(cuid())
-  name      String
-  email     String   @unique
-  password  String
-  role      Role     @default(USER)
-  createdAt DateTime @default(now())
+  id           String        @id @default(cuid())
+  name         String
+  email        String        @unique
+  password     String
+  role         Role          @default(USER)
+  createdAt    DateTime      @default(now())
+  ticketOrders TicketOrder[]
 }
 
 model BoyGroup {
@@ -54,16 +55,17 @@ model Member {
 }
 
 model Concert {
-  id         String   @id @default(cuid())
-  boyGroupId String
-  boyGroup   BoyGroup @relation(fields: [boyGroupId], references: [id], onDelete: Cascade)
-  title      String
-  date       DateTime
-  location   String
-  price      Int
-  quota      Int
-  posterUrl  String?
-  createdAt  DateTime @default(now())
+  id           String        @id @default(cuid())
+  boyGroupId   String
+  boyGroup     BoyGroup      @relation(fields: [boyGroupId], references: [id], onDelete: Cascade)
+  title        String
+  date         DateTime
+  location     String
+  price        Int
+  quota        Int
+  posterUrl    String?
+  createdAt    DateTime      @default(now())
+  ticketOrders TicketOrder[]
 
   @@index([boyGroupId])
 }
@@ -93,4 +95,26 @@ model Song {
   duration   Int
 
   @@index([albumId])
+}
+
+model TicketOrder {
+  id         String      @id @default(cuid())
+  userId     String
+  user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  concertId  String
+  concert    Concert     @relation(fields: [concertId], references: [id], onDelete: Cascade)
+  quantity   Int
+  totalPrice Int
+  status     OrderStatus @default(PENDING)
+  createdAt  DateTime    @default(now())
+
+  @@index([userId])
+  @@index([concertId])
+}
+
+enum OrderStatus {
+  PENDING
+  PAID
+  FAILED
+  CANCELLED
 }
