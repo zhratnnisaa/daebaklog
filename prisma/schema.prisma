@@ -20,6 +20,7 @@ model User {
   role         Role          @default(USER)
   createdAt    DateTime      @default(now())
   ticketOrders TicketOrder[]
+  albumOrders  AlbumOrder[]
 }
 
 model BoyGroup {
@@ -81,7 +82,8 @@ model Album {
   releaseDate DateTime
   createdAt   DateTime @default(now())
 
-  songs Song[]
+  songs       Song[]
+  albumOrders AlbumOrder[]
 
   @@index([boyGroupId])
 }
@@ -117,4 +119,19 @@ enum OrderStatus {
   PAID
   FAILED
   CANCELLED
+}
+
+model AlbumOrder {
+  id         String      @id @default(cuid())
+  userId     String
+  user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  albumId    String
+  album      Album       @relation(fields: [albumId], references: [id], onDelete: Cascade)
+  quantity   Int
+  totalPrice Int
+  status     OrderStatus @default(PENDING)
+  createdAt  DateTime    @default(now())
+
+  @@index([userId])
+  @@index([albumId])
 }
