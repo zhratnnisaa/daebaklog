@@ -48,11 +48,14 @@ export function AlbumForm({
 
       <div className="flex flex-col gap-2">
         <label className="text-white text-sm">Cover Album</label>
-        <UploadButton
-          endpoint="albumCover"
-          onClientUploadComplete={(res) => setCoverUrl(res[0].url)}
-          onUploadError={(err) => alert(`Upload gagal: ${err.message}`)}
-        />
+     <UploadButton
+      endpoint="albumCover"
+  onClientUploadComplete={(res) => {
+    if (res?.[0]?.ufsUrl) setCoverUrl(res[0].ufsUrl);
+  }}
+  onUploadError={(err) => alert(`Upload gagal: ${err.message}`)}
+/>
+        
         {coverUrl && (
           <Image src={coverUrl} alt="Preview" width={150} height={150} className="w-32 h-32 object-cover rounded" />
         )}
